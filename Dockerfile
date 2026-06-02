@@ -1,7 +1,8 @@
-####
-# Runtime-only Dockerfile for Quarkus (JVM mode, Java 21 Temurin).
-# Requiere que `./mvnw package` (o Cloud Build) haya generado target/quarkus-app/ antes.
-####
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn package -DskipTests
 
 FROM eclipse-temurin:21-jre
 
@@ -10,10 +11,10 @@ ENV APP_VERSION=${APP_VERSION}
 
 WORKDIR /deployments
 
-COPY target/quarkus-app/lib/     lib/
-COPY target/quarkus-app/*.jar    ./
-COPY target/quarkus-app/app/     app/
-COPY target/quarkus-app/quarkus/ quarkus/
+COPY --from=build /app/target/quarkus-app/lib/     lib/
+COPY --from=build /app/target/quarkus-app/*.jar    ./
+COPY --from=build /app/target/quarkus-app/app/     app/
+COPY --from=build /app/target/quarkus-app/quarkus/ quarkus/
 
 EXPOSE 8080
 
