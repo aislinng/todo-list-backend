@@ -14,20 +14,19 @@ import java.util.Set;
 @Priority(1)
 public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-    private static final Set<String> ALLOWED_ORIGINS = Set.of(
-        "http://localhost:8081",
-        "http://localhost:8082",
-        "http://localhost:19006",
-        "http://localhost:3000",
-        "https://todo-web-orcin.vercel.app"
-    );
-
     private static final String METHODS = "GET, POST, PUT, PATCH, DELETE, OPTIONS";
     private static final String HEADERS = "Content-Type, Authorization";
 
+    private boolean isAllowed(String origin) {
+        if (origin == null) return false;
+        return origin.startsWith("http://localhost") ||
+               origin.endsWith(".vercel.app") ||
+               origin.equals("https://todo-web-orcin.vercel.app");
+    }
+
     private String resolveOrigin(ContainerRequestContext ctx) {
         String origin = ctx.getHeaderString("Origin");
-        return (origin != null && ALLOWED_ORIGINS.contains(origin)) ? origin : ALLOWED_ORIGINS.iterator().next();
+        return isAllowed(origin) ? origin : "http://localhost:8081";
     }
 
     @Override
