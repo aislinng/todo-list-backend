@@ -69,7 +69,6 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-h2</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -109,6 +108,9 @@
                 <version>${surefire-plugin.version}</version>
                 <configuration>
                     <argLine>@{argLine}</argLine>
+                    <environmentVariables>
+                        <QUARKUS_HTTP_TEST_PORT>8090</QUARKUS_HTTP_TEST_PORT>
+                    </environmentVariables>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>

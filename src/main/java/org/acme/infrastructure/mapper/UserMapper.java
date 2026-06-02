@@ -13,6 +13,7 @@ public class UserMapper {
         user.setFirebaseUuid(entity.getFirebaseUuid());
         user.setRole(entity.getRole());
         user.setFullName(entity.getFullName());
+        user.setAvatarUrl(entity.getAvatarUrl());
         return user;
     }
 
@@ -24,6 +25,7 @@ public class UserMapper {
         entity.setFirebaseUuid(user.getFirebaseUuid());
         entity.setRole(user.getRole());
         entity.setFullName(user.getFullName());
+        entity.setAvatarUrl(user.getAvatarUrl());
         return entity;
     }
 }

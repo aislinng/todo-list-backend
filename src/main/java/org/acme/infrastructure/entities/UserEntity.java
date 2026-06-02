@@ -29,6 +29,9 @@ public class UserEntity {
     @Column(name="firebase_uuid", nullable = false, unique = true)
     private String firebaseUuid;
 
+    @Column(name="avatar_url", length = 500)
+    private String avatarUrl;
+
     @Column(name="created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -97,5 +100,13 @@ public class UserEntity {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

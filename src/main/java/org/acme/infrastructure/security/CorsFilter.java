@@ -18,7 +18,7 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
             requestContext.abortWith(
                 Response.ok()
                     .header("Access-Control-Allow-Origin", "http://localhost:8081")
-                    .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                    .header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
                     .header("Access-Control-Allow-Headers", "Content-Type, Authorization")
                     .header("Access-Control-Allow-Credentials", "true")
                     .header("Access-Control-Max-Age", "86400")
@@ -30,7 +30,7 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
         responseContext.getHeaders().putSingle("Access-Control-Allow-Origin", "http://localhost:8081");
-        responseContext.getHeaders().putSingle("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        responseContext.getHeaders().putSingle("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         responseContext.getHeaders().putSingle("Access-Control-Allow-Headers", "Content-Type, Authorization");
         responseContext.getHeaders().putSingle("Access-Control-Allow-Credentials", "true");
     }

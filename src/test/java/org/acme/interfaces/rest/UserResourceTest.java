@@ -38,15 +38,15 @@ class UserResourceTest {
 
         UserRecord firebaseRecord = Mockito.mock(UserRecord.class);
         Mockito.when(firebaseRecord.getUid()).thenReturn(firebaseUid);
-        Mockito.when(firebaseUserCreator.create(Mockito.eq(email), Mockito.eq("supersecret")))
+        Mockito.when(firebaseUserCreator.create(Mockito.eq(email), Mockito.eq("Supersecret1")))
                 .thenReturn(firebaseRecord);
 
-        String body = "{\"fullName\":\"Alice Smith\",\"email\":\"" + email + "\",\"password\":\"supersecret\"}";
+        String body = "{\"fullName\":\"Alice Smith\",\"email\":\"" + email + "\",\"password\":\"Supersecret1\"}";
 
         given()
                 .contentType(JSON)
                 .body(body)
-                .when().post("/users")
+                .when().post("/api/users")
                 .then()
                 .statusCode(200)
                 .body("email", equalTo(email))
@@ -66,17 +66,29 @@ class UserResourceTest {
     }
 
     @Test
+    void getMeShouldReturnAuthenticatedUser() {
+        // TestFirebaseAuthFilter inyecta un usuario hardcoded en cada request — no hace falta crearlo en DB
+        given()
+                .when().get("/api/users/me")
+                .then()
+                .statusCode(200)
+                .body("email", equalTo("test@test.com"))
+                .body("fullName", equalTo("Test User"))
+                .body("id", notNullValue());
+    }
+
+    @Test
     void registerUserShouldReturn500WhenFirebaseFails() throws FirebaseAuthException {
         FirebaseAuthException ex = Mockito.mock(FirebaseAuthException.class);
         Mockito.when(ex.getMessage()).thenReturn("firebase down");
         Mockito.when(firebaseUserCreator.create(Mockito.any(), Mockito.any())).thenThrow(ex);
 
-        String body = "{\"fullName\":\"Bob\",\"email\":\"bob@test.com\",\"password\":\"password123\"}";
+        String body = "{\"fullName\":\"Bob\",\"email\":\"bob@test.com\",\"password\":\"Password123\"}";
 
         given()
                 .contentType(JSON)
                 .body(body)
-                .when().post("/users")
+                .when().post("/api/users")
                 .then()
                 .statusCode(500);
     }

@@ -15,6 +15,7 @@ import org.acme.domain.repository.UserRepository;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -31,7 +32,7 @@ public class FirebaseAuthFilter implements ContainerRequestFilter {
         }
         String path=requestContext.getUriInfo().getPath();
         System.out.println(path);
-        if(path.equals("/users")){
+        if(path.equals("/api/users")){
             return;
         }
 
@@ -55,14 +56,18 @@ public class FirebaseAuthFilter implements ContainerRequestFilter {
             FirebaseToken decodedToken= FirebaseAuth
                     .getInstance()
                     .verifyIdToken(token,true);
-            Optional<User> userOptional= userRepository.findByFirebaseUuid(decodedToken.getUid());
-            if(userOptional.isEmpty()){
-                requestContext.abortWith(
-                        Response.status(Response.Status.UNAUTHORIZED)
-                                .entity("No autorizado").build()
-                );
-            }
-            User user= userOptional.get();
+            Optional<User> userOptional = userRepository.findByFirebaseUuid(decodedToken.getUid());
+            User user = userOptional.orElseGet(() -> {
+                User newUser = new User();
+                newUser.setId(UUID.randomUUID());
+                newUser.setFirebaseUuid(decodedToken.getUid());
+                newUser.setEmail(decodedToken.getEmail());
+                String name = decodedToken.getName();
+                newUser.setFullName(name != null && !name.isBlank() ? name : decodedToken.getEmail());
+                newUser.setRole("USER");
+                newUser.setActive(true);
+                return userRepository.create(newUser);
+            });
             authContext.setUser(user);
 
         } catch (FirebaseAuthException e) {
